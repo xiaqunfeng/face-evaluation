@@ -1,0 +1,4 @@
+52_Photographers_photographertakingphoto_52_310
+2
+622 178 84 112 0.997143
+715 468 128 168 0.0119447

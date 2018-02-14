@@ -1,0 +1,3 @@
+32_Worker_Laborer_Worker_Laborer_32_468
+1
+350 99 105 160 0.998476

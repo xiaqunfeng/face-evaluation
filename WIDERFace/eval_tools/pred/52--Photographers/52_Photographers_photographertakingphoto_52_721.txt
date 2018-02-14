@@ -1,0 +1,4 @@
+52_Photographers_photographertakingphoto_52_721
+2
+288 316 374 514 0.999933
+943 594 60 70 0.0866916

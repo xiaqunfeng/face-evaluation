@@ -1,0 +1,5 @@
+12_Group_Team_Organized_Group_12_Group_Team_Organized_Group_12_67
+3
+289 22 182 187 0.999496
+629 212 124 191 0.994712
+730 200 85 132 0.0411873

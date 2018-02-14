@@ -1,0 +1,3 @@
+2_Demonstration_Political_Rally_2_219
+1
+340 209 349 525 0.999685

@@ -1,0 +1,3 @@
+25_Soldier_Patrol_Soldier_Patrol_25_986
+1
+405 108 136 176 0.999688

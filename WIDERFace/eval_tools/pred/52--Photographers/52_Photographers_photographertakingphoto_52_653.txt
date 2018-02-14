@@ -1,0 +1,4 @@
+52_Photographers_photographertakingphoto_52_653
+2
+430 107 461 537 0.979803
+484 144 270 275 0.0435122

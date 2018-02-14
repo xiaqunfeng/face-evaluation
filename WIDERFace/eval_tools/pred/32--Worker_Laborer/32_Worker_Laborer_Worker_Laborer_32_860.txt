@@ -1,0 +1,3 @@
+32_Worker_Laborer_Worker_Laborer_32_860
+1
+304 316 467 604 0.997446

@@ -1,0 +1,4 @@
+8_Election_Campain_Election_Campaign_8_25
+2
+590 139 176 274 0.999877
+269 0 300 244 0.0100293

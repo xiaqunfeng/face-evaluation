@@ -1,0 +1,4 @@
+26_Soldier_Drilling_Soldiers_Drilling_26_606
+2
+217 79 124 165 0.999921
+639 108 127 176 0.999673
