@@ -1,0 +1,6 @@
+nohup python run_idcard_experiment.py \
+../../feat_dir \
+../../feat_dir \
+_feat.bin \
+../eval-results-idcard1M/idcard1M-features-sphereface-64-1220 \
+-s 1000000 > nohup-idcard-exp.txt &
