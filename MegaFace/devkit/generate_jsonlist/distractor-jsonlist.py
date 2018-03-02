@@ -5,6 +5,7 @@ import codecs
 import argparse
 
 ap = argparse.ArgumentParser()
+ap.add_argument("-p", "--path", required=True, help="path of groudtruth txt file")
 ap.add_argument("-n", "--num", required=True, help="num of distractor image")
 args = vars(ap.parse_args())
 
@@ -12,10 +13,11 @@ args = vars(ap.parse_args())
 lst = range(1000000)
 
 # get relationship of scene and idcard
+path_gt = args["path"]
+scene = path_gt + "/scene_file.txt"
+idcard = path_gt + "/id_card_file.txt"
 scene_num = 0
 dict_scene = {}
-scene = "../../xqf/face_code_book/scene_file.txt"
-idcard = "../../xqf/face_code_book/id_card_file.txt"
 with open(scene, 'rt') as f:
     for line in f:
         img_name = line.split(' ')[0]
@@ -42,6 +44,7 @@ print 'len(lst) =',len(lst)
 
 #slice = random.sample(lst, args["num"])
 
+# add path field to dic
 dic = {}
 lst_path = []
 path_idcard = 'id_card/'
@@ -53,6 +56,7 @@ for img_num in range(nums):
     lst_path.append(name)
 dic["path"] = lst_path
 
+# write dic to json file
 #probe_jsonlist = json.dumps(dic)
 save_name = 'idDistractor_features_list.json_' + str(nums) + '_1'
 with codecs.open(save_name, 'w') as f:
