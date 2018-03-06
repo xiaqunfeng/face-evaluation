@@ -16,14 +16,14 @@ lst = range(1000000)
 path_gt = args["path"]
 scene = path_gt + "/scene_file.txt"
 idcard = path_gt + "/id_card_file.txt"
-scene_num = 0
+lst_scene_idx = []
 dict_scene = {}
 with open(scene, 'rt') as f:
     for line in f:
         img_name = line.split(' ')[0]
         img_index = re.split(r'[\s]', line)[1]
         dict_scene[img_index] = img_name
-        scene_num += 1
+        lst_scene_idx.append(int(img_index))
 
 dict_idcard = {}
 with open(idcard, 'rt') as f:
@@ -34,7 +34,7 @@ with open(idcard, 'rt') as f:
 
 # remove scene in idcard
 dict_res = {} # scene_index : idcard_index
-for i in range(scene_num):
+for i in lst_scene_idx:
     dict_res[i] = dict_idcard[dict_scene[str(i)]]
     # remove from lst
     #del lst[int(dict_res[i])]
