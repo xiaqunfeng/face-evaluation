@@ -31,19 +31,19 @@ def linear_interp_logx(x_t, x1, x2, y1, y2):
     assert(x_t >= x1)
     assert(x_t <= x2)
 
-    if x1 <= 0:
-        x1 = 1e-20
+    if x1 <= 0 or x2 <=0 :
+        # x1 = 1e-20
+        _x = x_t
+        _x1 = x1
+        _x2 = x2        
+    else:
+        _x = log10(x_t)
+        _x1 = log10(x1)
+        _x2 = log10(x2)
 
-    log_x = log10(x_t)
-#    print x_t
-#    print x1
-#    print x2
-    log_x1 = log10(x1)
-    log_x2 = log10(x2)
-
-    dx12 = float(log_x2 - log_x1)
-    f1 = (log_x - log_x1) / dx12
-    f2 = (log_x2 - log_x) / dx12
+    dx12 = float(_x2 - _x1)
+    f1 = (_x - _x1) / dx12
+    f2 = (_x2 - _x) / dx12
 
     y_t = y1 * f2 + y2 * f1
 

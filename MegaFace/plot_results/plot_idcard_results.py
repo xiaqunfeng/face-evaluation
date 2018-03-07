@@ -24,11 +24,13 @@ if __name__ == '__main__':
     # other_methods_dir = r'C:\zyf\dataset\megaface\Challenge1External'
     save_tpr_and_rank1_for_others = False
     # save_tpr_and_rank1_for_others = True
+    target_fpr = 1e-6 # default = 1e-8
 
     save_dir = './rlt_idcard1M_%s_facex_sphere64' % probe
     plot_megaface_result(my_method_dirs, my_method_labels,
                             probe,
                             save_dir,
                             other_methods_dir,
-                            save_tpr_and_rank1_for_others
+                            save_tpr_and_rank1_for_others,
+                            target_fpr=target_fpr
                             )

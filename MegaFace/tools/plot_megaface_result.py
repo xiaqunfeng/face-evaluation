@@ -18,7 +18,7 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 
-from interpolation import linear_interp, nearest_neighbor_interp
+from interpolation import linear_interp, linear_interp_logx, nearest_neighbor_interp
 
 
 def generate_n_distractors():
@@ -63,25 +63,32 @@ def interp_target_tpr(roc, target_fpr):
         print 'target_fpr out of bound, will return -1'
         return -1.0
 
-    # This interpolation might be the one that MegaFace officially uses
-    for i, fpr in enumerate(roc[0]):
-        if fpr > target_fpr:
-            return roc[1][i]
-
-    # linear interpolation
+    # # This interpolation might be the one that MegaFace officially uses
     # for i, fpr in enumerate(roc[0]):
     #     if fpr > target_fpr:
-    #         break
+    #         return roc[1][i]
 
+    # linear interpolation
+    for i, fpr in enumerate(roc[0]):
+        if fpr > target_fpr:
+            break
+
+    # linear x interpolation
     # target_tpr = linear_interp(target_fpr,
     #                              roc[0][i - 1], roc[0][i],
     #                              roc[1][i - 1], roc[1][i]
     #                              )
 
+    # linear logx interpolation
+    target_tpr = linear_interp_logx(target_fpr,
+                                 roc[0][i - 1], roc[0][i],
+                                 roc[1][i - 1], roc[1][i]
+                                 )
+
     # NN interpolation
-#    target_tpr = nearest_neighbor_interp(target_fpr, roc[0], roc[1])
-#
-#    return target_tpr
+    # target_tpr = nearest_neighbor_interp(target_fpr, roc[0], roc[1])
+
+    return target_tpr
 
 
 def interp_target_rank_recall(cmc, target_rank):
@@ -116,12 +123,11 @@ def load_result_data(folder, probe_name):
     #    n_distractors = generate_n_distractors()
     print '===> Load result data from ', folder
 
-    #print probe_name
     all_files = os.listdir(folder)
-    #print 'all_files: ', all_files
+#    print 'all_files: ', all_files
     cmc_files = sorted(
         [a for a in all_files if fnmatch(a.lower(), 'cmc*%s*_1.json' % probe_name.lower())])[::-1]
-    #print 'cmc_files: ', cmc_files
+#    print 'cmc_files: ', cmc_files
 
     if not cmc_files:
         return None
@@ -159,8 +165,8 @@ def load_result_data(folder, probe_name):
     return {
         'rocs': rocs,
         'cmcs': cmcs,
-        'rank_1': rank_1,
-        'rank_10': rank_10
+        'Rank_1': rank_1,
+        'Rank_10': rank_10
         # 'roc_10k': roc_10K,
         # 'roc_100k': roc_100K,
         # 'roc_1M': roc_1M
@@ -213,7 +219,7 @@ def load_result_data(folder, probe_name):
 #     # print cmc_dict[1000000]['cmc'][1][0]
 #     # print cmc_dict[10]['roc']
 
-#     return {'rank_1': rank_1,
+#     return {'Rank_1': rank_1,
 #             'rocs': rocs,
 #             'roc_10k': roc_10K,
 #             'roc_1M': roc_1M
@@ -227,7 +233,7 @@ def calc_target_tpr_and_rank(rocs, rank_1, rank_10, save_dir,
     print('===> Calc and save TPR@FPR={:g} for method: {}'.format(
         target_fpr, method_label))
     fn_tpr = osp.join(save_dir, 'TPRs-at-FPR_%g' % target_fpr)
-    fn_rank = osp.join(save_dir, 'rank_vs_distractors')
+    fn_rank = osp.join(save_dir, 'Rank_vs_distractors')
 
     if method_label:
         fn_tpr += '_' + method_label
@@ -336,7 +342,7 @@ def plot_megaface_result(your_method_dirs, your_method_labels,
     your_methods_data = []
 
     fn_tpr_sum = osp.join(save_dir, 'TPRs-at-FPR_%g_summary_all.txt' % target_fpr)
-    fn_rank_sum = osp.join(save_dir, 'rank_vs_distractors_summary_all.txt')
+    fn_rank_sum = osp.join(save_dir, 'Rank_vs_distractors_summary_all.txt')
 
     fp_tpr_sum = open(fn_tpr_sum, 'w')
     fp_rank_sum = open(fn_rank_sum, 'w')
@@ -371,8 +377,8 @@ def plot_megaface_result(your_method_dirs, your_method_labels,
 
         rocs = your_result['rocs']
         cmcs = your_result['cmcs']
-        rank_1 = your_result['rank_1']
-        rank_10 = your_result['rank_10']
+        rank_1 = your_result['Rank_1']
+        rank_10 = your_result['Rank_10']
 
         your_methods_data.append(your_result)
 
@@ -420,6 +426,9 @@ def plot_megaface_result(your_method_dirs, your_method_labels,
 
         # plt.grid(True, which='both')
 
+        ax.set_xlabel('FPR (log scale)')
+        ax.set_ylabel('TPR')
+
         plt.legend(loc='lower right')
         plt.show()
         save_fn = osp.join(save_dir,
@@ -453,6 +462,9 @@ def plot_megaface_result(your_method_dirs, your_method_labels,
             plt.grid(True, which='minor', ls='--')
 
         # plt.grid(True, which='both')
+
+        ax.set_xlabel('Rank (log scale)')
+        ax.set_ylabel('Identification Rate')
 
         plt.legend(loc='lower right')
         plt.show()
@@ -518,8 +530,8 @@ def plot_megaface_result(your_method_dirs, your_method_labels,
         if save_tpr_and_rank1_for_others:
             for name in other_methods_list:
                 calc_target_tpr_and_rank(other_methods_data[name]['rocs'],
-                                         other_methods_data[name]['rank_1'],
-                                         other_methods_data[name]['rank_10'],
+                                         other_methods_data[name]['Rank_1'],
+                                         other_methods_data[name]['Rank_10'],
                                          save_dir, name,
                                          fp_tpr_sum=fp_tpr_sum,
                                          fp_rank_sum=fp_rank_sum)
@@ -565,8 +577,9 @@ def plot_megaface_result(your_method_dirs, your_method_labels,
         ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
         ax.set_xlim([1e-6, 1])
         ax.set_ylim([ymin, 1])
-        ax.set_xlabel('False Positive Rate')
-        ax.set_ylabel('True Positive Rate')
+
+        ax.set_xlabel('FPR (log scale)')
+        ax.set_ylabel('TPR')
 
         # Put a legend to the right of the current axis
         ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
@@ -620,8 +633,9 @@ def plot_megaface_result(your_method_dirs, your_method_labels,
         ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
         ax.set_xlim([1, 1e4])
         ax.set_ylim([ymin, 1])
-        ax.set_xlabel('Rank')
-        ax.set_ylabel('Identification Rate (Recall)')
+
+        ax.set_xlabel('Rank (log scale)')
+        ax.set_ylabel('Identification Rate')
 
         # Put a legend to the right of the current axis
         ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
@@ -656,7 +670,7 @@ def plot_megaface_result(your_method_dirs, your_method_labels,
         else:
             _color = np.random.rand(3)
 
-        ax.semilogx(n_distractors, your_methods_data[j]['rank_1'],
+        ax.semilogx(n_distractors, your_methods_data[j]['Rank_1'],
                     label=your_method_labels[j],
                     c=_color)
         color_idx += 1
@@ -671,7 +685,7 @@ def plot_megaface_result(your_method_dirs, your_method_labels,
                 _color = np.random.rand(3)
             ax.semilogx(
                 n_distractors,
-                other_methods_data[name]['rank_1'],
+                other_methods_data[name]['Rank_1'],
                 label=name,
                 c=_color)
             color_idx += 1
@@ -679,8 +693,9 @@ def plot_megaface_result(your_method_dirs, your_method_labels,
     # Shrink current axis by 20%
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-    ax.set_xlabel('# distractors (logscale)')
-    ax.set_ylabel('Identification rate')
+
+    ax.set_xlabel('#distractors (log scale)')
+    ax.set_ylabel('Identification Rate (Rank-1)')
 
     ax.set_xlim([10, 1e6])
     ax.set_ylim([ymin, 1])
